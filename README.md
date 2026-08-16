@@ -10,7 +10,7 @@ The **Model Context Protocol (MCP)** defines an open standard for client applica
 
 ```mermaid
 graph TD
-    Client["MCP Client (e.g. Claude Desktop / Agent)"] <-->|JSON-RPC 2.0 (Stdio / SSE)| Server["MCP Server"]
+    Client["MCP Client (e.g. Claude Desktop / Agent)"] <-->|"JSON-RPC 2.0 (Stdio / SSE)"| Server["MCP Server"]
     Server <--> Tools["Tools (e.g. add_expense, summarize)"]
     Server <--> Resources["Resources (e.g. expense://categories)"]
     Server <--> Database[("Data Store (e.g. SQLite)")]
