@@ -33,6 +33,14 @@ A production-ready Python MCP server built using **FastMCP** and **SQLite** for 
 - **Resources**:
   - `expense://categories`: Returns real-time JSON taxonomy of valid expense categories and subcategories.
 
+### 2. 🌐 [Remote Expense Tracker MCP Server](file:///Users/shlokbam/Documents/Code/MCP%20%28Model%20Context%20Protocol%29/Remote_Server/README.md) (`Remote_Server`)
+A cloud-deployed async HTTP MCP server for expense tracking over SSE/HTTP transport.
+
+- **Deployed URL**: [`https://remote-server-sb.fastmcp.app/mcp`](https://remote-server-sb.fastmcp.app/mcp)
+- **Stack**: Python 3.14+, FastMCP, `aiosqlite` (async SQLite), HTTP/SSE transport.
+- **Tools**: Async `add_expense`, `list_expenses`, `summarize`.
+- **Resource**: `expense:///categories`.
+
 ---
 
 ## 🚀 Quick Start Guide
