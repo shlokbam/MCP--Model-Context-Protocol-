@@ -1,0 +1,33 @@
+# Environment variables and secrets
+.env
+*.env
+.env.*
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# SQLite databases & logs
+*.db
+*.sqlite3
+*.log
+
+# Streamlit config & runtime caches
+.streamlit/
+
+# OS / IDE generated files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.tmp
