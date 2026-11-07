@@ -1,99 +1,64 @@
-# Model Context Protocol (MCP) Workspace & Client Repository
+<div align="center">
 
-An open repository housing Model Context Protocol (MCP) servers, tools, and client applications connecting AI models securely to data sources and execution environments.
+<img src=".github/assets/banner.svg" alt="MCP: servers and a client, from both sides" width="100%">
 
----
+<img src="https://img.shields.io/badge/remote%20server-live-FF5A1F?style=flat-square&labelColor=2A2926" alt="remote server: live">
+<img src="https://img.shields.io/badge/framework-FastMCP-F2EFE7?style=flat-square&labelColor=2A2926" alt="framework: FastMCP">
+<img src="https://img.shields.io/badge/client-LangGraph%20%2B%20Streamlit-F2EFE7?style=flat-square&labelColor=2A2926" alt="client: LangGraph + Streamlit">
+<img src="https://img.shields.io/badge/db-SQLite-F2EFE7?style=flat-square&labelColor=2A2926" alt="db: SQLite">
 
-## 🌐 Overview
+<a href="#what-it-does">What it does</a> · <a href="#stack">Stack</a> · <a href="#run-it">Run it</a>
 
-The **Model Context Protocol (MCP)** defines an open standard for client applications (like Claude Desktop, Cursor, or Streamlit AI agents) to discover and interact with external data sources (Resources), actionable functions (Tools), and pre-built templates (Prompts).
+</div>
 
-```mermaid
-graph TD
-    Client["MCP Client (Streamlit / LangGraph Agent)"] <-->|"JSON-RPC 2.0 (HTTP POST / SSE)"| Server["MCP Server (emailmd / Expense Tracker)"]
-    Server <--> Tools["Tools (render, lint, read_docs, add_expense)"]
-    Server <--> Resources["Resources (expense://categories)"]
-    Server <--> Database[("Data Store / API")]
+Three small projects that cover the Model Context Protocol from both ends: an expense-tracker MCP server (local and deployed), and an MCP client chatbot that drives someone else's server.
+
+## What it does
+
+| Folder | What it is |
+| :--- | :--- |
+| [`Expense_Tracker_MCP_Server/`](Expense_Tracker_MCP_Server) | A FastMCP server over SQLite with `add_expense`, `list_expenses` and `summarize` tools and an `expense://categories` resource (20 categories) |
+| [`Remote_Server/`](Remote_Server) | The same server rewritten async with `aiosqlite` and deployed over HTTP at `https://remote-server-sb.fastmcp.app/mcp` |
+| [`ChatBot/`](ChatBot) | A LangGraph + Mistral chatbot that connects to the [emailmd](https://www.emailmd.dev) MCP server, calls its `render`, `lint` and `read_docs` tools and previews the email it builds |
+
+## Stack
+
+| Area | Tools |
+| :--- | :--- |
+| Servers | Python 3.14, FastMCP, SQLite / aiosqlite, uv |
+| Client | MCP Python SDK, LangChain, LangGraph, Mistral, LangSmith, Streamlit |
+
+## Run it
+
+```bash
+# local server, with the MCP inspector
+cd Expense_Tracker_MCP_Server && uv run fastmcp dev inspector main.py
+
+# client chatbot (needs MISTRAL_API_KEY)
+cd ChatBot && pip install -r requirements.txt && streamlit run app.py
 ```
 
----
-
-## 📦 Projects & Included Applications
-
-### 1. 🤖 [emailmd AI Assistant & MCP Client Chatbot](file:///Users/shlokbam/Documents/Code/MCP%20%28Model%20Context%20Protocol%29/ChatBot/README.md) (`ChatBot`)
-A full-stack interactive AI Chatbot and **MCP Client** built with **LangChain**, **LangGraph**, **LangSmith**, **ChatMistralAI**, and **Streamlit**.
-
-- **Connected Server**: [`https://www.emailmd.dev/api/mcp`](https://www.emailmd.dev/api/mcp)
-- **Stack**: Python 3.13, LangChain, LangGraph, LangSmith, ChatMistralAI, Streamlit, MCP Python SDK.
-- **Discovered Tools**: `render`, `lint`, `read_docs`.
-- **Features**: Live HTML email preview iframe tab, multi-turn conversation memory, intermediate tool call execution cards, and LangSmith telemetry.
-- **Quick Start**:
-  ```zsh
-  cd ChatBot
-  streamlit run app.py
-  ```
-
-### 2. 💳 [Expense Tracker MCP Server](file:///Users/shlokbam/Documents/Code/MCP%20%28Model%20Context%20Protocol%29/Expense_Tracker_MCP_Server/README.md) (`Expense_Tracker_MCP_Server`)
-A production-ready Python MCP server built using **FastMCP** and **SQLite** for tracking, listing, and summarizing personal/business expenses.
-
-- **Stack**: Python 3.14+, FastMCP (v3.4.7+), SQLite, `uv`.
-- **Database**: Auto-initialized SQLite database ([`expenses.db`](file:///Users/shlokbam/Documents/Code/MCP%20%28Model%20Context%20Protocol%29/Expense_Tracker_MCP_Server/main.py)).
-- **Category Taxonomy**: Dynamic 20-category schema configured in [`categories.json`](file:///Users/shlokbam/Documents/Code/MCP%20%28Model%20Context%20Protocol%29/Expense_Tracker_MCP_Server/categories.json).
-- **Tools**: `add_expense`, `list_expenses`, `summarize`.
-- **Resources**: `expense://categories`.
-
-### 3. 🌐 [Remote Expense Tracker MCP Server](file:///Users/shlokbam/Documents/Code/MCP%20%28Model%20Context%20Protocol%29/Remote_Server/README.md) (`Remote_Server`)
-A cloud-deployed async HTTP MCP server for expense tracking over SSE/HTTP transport.
-
-- **Deployed URL**: [`https://remote-server-sb.fastmcp.app/mcp`](https://remote-server-sb.fastmcp.app/mcp)
-- **Stack**: Python 3.14+, FastMCP, `aiosqlite` (async SQLite), HTTP/SSE transport.
-- **Tools**: Async `add_expense`, `list_expenses`, `summarize`.
-- **Resource**: `expense:///categories`.
-
----
-
-## 🚀 Quick Start Guide
-
-### Running the emailmd MCP Chatbot
-```zsh
-cd ChatBot
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-### Running the Expense Tracker MCP Server
-```zsh
-cd Expense_Tracker_MCP_Server
-uv run fastmcp dev inspector main.py
-```
-
----
-
-## 🛠️ Connecting to MCP Clients
-
-To register local MCP servers with client applications like Claude Desktop or Cursor, add them to your MCP configuration file (`claude_desktop_config.json`):
+To use the local server in Claude Desktop or Cursor, add it to your MCP config:
 
 ```json
 {
   "mcpServers": {
     "expense-tracker": {
       "command": "uv",
-      "args": [
-        "--directory",
-        "/Users/shlokbam/Documents/Code/MCP (Model Context Protocol)/Expense_Tracker_MCP_Server",
-        "run",
-        "main.py"
-      ]
+      "args": ["--directory", "/path/to/Expense_Tracker_MCP_Server", "run", "main.py"]
     }
   }
 }
 ```
 
+Or connect any MCP client to the deployed server: `https://remote-server-sb.fastmcp.app/mcp`.
+
 ---
 
-## 📖 Reference & Documentation
+<div align="center">
 
-- [emailmd MCP ChatBot Detailed README](file:///Users/shlokbam/Documents/Code/MCP%20%28Model%20Context%20Protocol%29/ChatBot/README.md)
-- [Expense Tracker Server Detailed README](file:///Users/shlokbam/Documents/Code/MCP%20%28Model%20Context%20Protocol%29/Expense_Tracker_MCP_Server/README.md)
-- [Official MCP Specification](https://modelcontextprotocol.io)
-- [emailmd MCP Endpoint](https://www.emailmd.dev/api/mcp)
+<a href="https://shlokbam.in"><img src=".github/assets/footer.svg" alt="Built by Shlok Bam" width="100%"></a>
+
+<a href="https://shlokbam.in">shlokbam.in</a> · <a href="https://www.linkedin.com/in/shlokbam/">LinkedIn</a> · <a href="https://github.com/shlokbam">More projects</a>
+
+</div>
